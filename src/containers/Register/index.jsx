@@ -45,16 +45,30 @@ export function Register() {
 
   console.log(errors);
   const onSubmit = async (data) => {
-    const { status } = await api.post('/users', {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    }, 
-    {
-        validateStatus: () => true,
-    });
+    try {
+      const { status } = await api.post(
+        '/users',
+        {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        },
+        {
+          validateStatus: () => true,
+        },
+      );
 
-    console.log(status);
+      if (status === 200 || status === 201) {
+        toast.success('Conta criada com sucesso! 👌');
+      } else if (status === 400) {
+        toast.error('E-mail já cadastrado! 😥');
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('😭 Falha no servidor, tente novamente mais tarde!');
+    }
   };
 
   return (
